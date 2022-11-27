@@ -39,7 +39,7 @@ export const getSongs = async (
   token: string | null
 ): Promise<Res<ManySongBodyRes>> => {
   const res: Res<ManySongBodyRes> = await api
-    .get("/penyanyi/read", {
+    .get("/premium/read", {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => response.data);
@@ -52,7 +52,7 @@ export const createSong = async (
   token: string
 ): Promise<Res<SongBodyRequest>> => {
   const res: Res<SongBodyRequest> = await api
-    .post("/penyanyi/create", {
+    .post("/premium/create", {
       headers: { Authorization: `Bearer ${token}` },
       data: { judul, audiopath },
     })
@@ -67,7 +67,7 @@ export const updateSong = async (
   token: string
 ): Promise<Res<SingleSongBodyRes>> => {
   const res: Res<SingleSongBodyRes> = await api
-    .patch(`/penyanyi/update/${idSong}`, {
+    .patch(`/premium/update/${idSong}`, {
       headers: { Authorization: `Bearer ${token}` },
       data: { judul, audiopath },
     })
@@ -80,7 +80,7 @@ export const deleteSong = async (
   token: string
 ): Promise<Res<SingleSongBodyRes>> => {
   const res: Res<SingleSongBodyRes> = await api
-    .delete(`/penyanyi/delete/${idSong}`, {
+    .delete(`/premium/delete/${idSong}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => response.data);
