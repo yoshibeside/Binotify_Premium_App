@@ -11,10 +11,13 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useAuth } from "../context/auth";
 
 const Login = () => {
   const [smallScreen] = useMediaQuery("(max-width: 800px)");
   const logoWidth = smallScreen ? "150px" : "200px";
+
+  const { login } = useAuth();
 
   const [usernameInvalid, setUsernameInvalid] = useState(false);
   const [passwordInvalid, setPasswordInvalid] = useState(false);
@@ -32,6 +35,11 @@ const Login = () => {
         setPasswordInvalid(true);
       }
     }
+
+    if (usernameInvalid || passwordInvalid) {
+      return;
+    }
+    login(username.value, password.value);
   };
 
   const handleInputChange = () => {

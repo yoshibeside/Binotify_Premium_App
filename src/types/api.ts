@@ -1,4 +1,4 @@
-import { Song, User } from "./models";
+import { Song, Subscription, User } from "./models";
 
 export type RegisBodyRequest = {
   username: string;
@@ -34,6 +34,12 @@ export type ManySongBodyRes = {
 
 export type SingleSongBodyRes = {
   song: Song;
+};
+
+export type ManySubscriptionBodyRes = Subscription[];
+
+export type SingleSubscriptionBodyRes = {
+  subscription: Subscription;
 };
 
 export type Res<T> = {
