@@ -11,6 +11,9 @@ import {
 import { useState } from "react";
 
 const Register = () => {
+  const pageTitle = document.getElementById("page-title");
+  pageTitle!.innerHTML = "Register - Binotify";
+
   const [nameTooShort, setNameTooShort] = useState(false);
   const [usernameTooShort, setUsernameTooShort] = useState(false);
   const [passwordTooShort, setPasswordTooShort] = useState(false);

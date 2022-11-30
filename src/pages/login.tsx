@@ -14,6 +14,8 @@ import { useState } from "react";
 import { useAuth } from "../context/auth";
 
 const Login = () => {
+  const pageTitle = document.getElementById("page-title");
+  pageTitle!.innerHTML = "Login - Binotify";
   const [smallScreen] = useMediaQuery("(max-width: 800px)");
   const logoWidth = smallScreen ? "150px" : "200px";
 
@@ -61,7 +63,6 @@ const Login = () => {
       direction="column"
       height="100vh"
       width="100%"
-      padding="40px"
       justify="center"
       align="center"
       gap="1rem"

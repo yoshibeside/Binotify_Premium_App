@@ -20,6 +20,9 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/auth";
 
 const Admin = () => {
+  const pageTitle = document.getElementById("page-title");
+  pageTitle!.innerHTML = "Subscription Requests - Binotify";
+
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [smallScreen] = useMediaQuery("(max-width: 800px)");
   const { token } = useAuth();
