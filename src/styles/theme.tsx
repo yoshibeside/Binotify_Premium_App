@@ -53,13 +53,6 @@ const theme = extendTheme({
           }
         }
       },
-    },
-    Progress: {
-      baseStyle: {
-        filledTrack: {
-          bg: "palette.lightPink"
-        }
-      }
     }
   },
   styles: {
