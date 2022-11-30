@@ -6,11 +6,12 @@ import {
   LoginBodyRes,
   SongBodyRequest,
 } from "../types/api";
+import { Song } from "../types/models";
 
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL:"http://localhost:3000",
 });
 
 export const register = async (
@@ -48,13 +49,18 @@ export const getSongs = async (
 
 export const createSong = async (
   judul: string,
-  audiopath: string,
+  audiopath: File | undefined,
   token: string
-): Promise<Res<SongBodyRequest>> => {
-  const res: Res<SongBodyRequest> = await api
+): Promise<Res<Song>> => {
+  const formData = new FormData();
+  formData.append('judul', judul);
+  if (audiopath) {
+    formData.append('audiopath', audiopath);
+  }
+  const res: Res<Song> = await api
     .post("/premium/create", {
       headers: { Authorization: `Bearer ${token}` },
-      data: { judul, audiopath },
+      data: formData,
     })
     .then((response) => response.data);
   return res;
