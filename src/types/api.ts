@@ -1,4 +1,4 @@
-import { Song } from "./models";
+import { Song, User } from "./models";
 
 export type RegisBodyRequest = {
   username: string;
@@ -24,7 +24,7 @@ export type RegisBodyRes = {
 };
 
 export type LoginBodyRes = {
-  id: number;
+  user: User;
   token: string;
 };
 
