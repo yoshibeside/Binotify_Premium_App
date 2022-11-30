@@ -6,8 +6,8 @@ import React from "react";
 import { AuthProvider, useAuth } from "./context/auth";
 import { Song, User } from "./types/models";
 import { SongTable } from "./components/songTable";
+import Login from './pages/login';
 import Penyanyi from "./pages/penyanyi";
-import Index from "./pages/index";
 import Admin from './pages/admin';
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
       <ChakraProvider theme={theme}>
         <BrowserRouter>
         <Routes>
+          <Route path='/login' element={<Login />} />
           <Route path='/user' element={<Penyanyi />} />
           <Route path='/admin' element={<Admin />} />
         </Routes>
