@@ -68,7 +68,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (!user) {
-      getSelfData(token).then((res) => {
+      const realToken = token || localStorage.getItem("token") || "";
+      getSelfData(realToken).then((res) => {
         if (!res.isError && res.data) {
           setUser(res.data);
         } else {
@@ -77,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
     }
-  }, []);
+  }, [token]);
 
   // Session guard
   useEffect(() => {
