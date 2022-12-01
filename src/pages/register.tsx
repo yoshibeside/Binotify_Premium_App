@@ -126,7 +126,7 @@ const Register = () => {
       overflow="hidden"
     >
       <Image
-        src="/src/assets/logo_name_vertical_binotify.png"
+        src="/assets/logo_name_vertical_binotify.png"
         alt="logo"
         width="50%"
         padding="40px"

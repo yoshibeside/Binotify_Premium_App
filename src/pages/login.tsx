@@ -68,7 +68,7 @@ const Login = () => {
       gap="1rem"
     >
       <Image
-        src="/src/assets/logo_name_vertical_binotify.png"
+        src="/assets/logo_name_vertical_binotify.png"
         alt="logo"
         width={logoWidth}
         padding="20px 0 20px"
