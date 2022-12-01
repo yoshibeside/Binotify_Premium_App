@@ -100,6 +100,7 @@ const Login = () => {
         <FormLabel color="palette.lightPink">Password</FormLabel>
         <Input
           id="password"
+          type="password"
           textColor="palette.sheerPink"
           focusBorderColor="palette.white"
         />

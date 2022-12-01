@@ -35,6 +35,9 @@ const Penyanyi = () => {
     page: "1",
     search: "",
   });
+  const pageTitle = document.getElementById("page-title");
+  pageTitle!.innerHTML = "Your Songs - Binotify";
+
   const [songs, setSongs] = useState<Song[]>([]);
   const { token, logout } = useAuth();
   const toast = useToast();
@@ -105,6 +108,7 @@ const Penyanyi = () => {
               placeholder="Search"
               focusBorderColor="palette.white"
               height="2rem"
+              textColor="palette.sheerPink"
               onChange={(e) => {
                 setSearchParams({ search: e.target.value });
               }}
