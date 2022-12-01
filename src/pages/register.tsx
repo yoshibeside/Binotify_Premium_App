@@ -27,7 +27,7 @@ const Register = () => {
   const toast = useToast();
 
   const handleNameChange = (e: any) => {
-    if (e.target.value.length < 8) {
+    if (e.target.value.length < 4) {
       setNameTooShort(true);
     } else {
       setNameTooShort(false);
@@ -35,7 +35,7 @@ const Register = () => {
   };
 
   const handleUsernameChange = (e: any) => {
-    if (e.target.value.length < 8) {
+    if (e.target.value.length < 5) {
       setUsernameTooShort(true);
     } else {
       setUsernameTooShort(false);
