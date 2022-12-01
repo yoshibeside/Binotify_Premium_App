@@ -1,17 +1,15 @@
 import {
-  ManySongBodyRes,
-  SingleSongBodyRes,
-  Res,
-  RegisBodyRes,
   LoginBodyRes,
-  SongBodyRequest,
-  SingleSubscriptionBodyRes,
+  ManySongBodyRes,
   ManySubscriptionBodyRes,
+  RegisBodyRes,
+  Res,
+  SingleSongBodyRes,
+  SingleSubscriptionBodyRes,
 } from "../types/api";
 import { Song, User } from "../types/models";
 
 import axios from "axios";
-import { useAuth } from "../context/auth";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_REST_API_URL,
@@ -25,7 +23,8 @@ export const register = async (
 ): Promise<Res<RegisBodyRes>> => {
   const res: Res<RegisBodyRes> = await api
     .post("/register", { username, name, email, password })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -35,7 +34,8 @@ export const login = async (
 ): Promise<Res<LoginBodyRes>> => {
   const res: Res<LoginBodyRes> = await api
     .post("/login", { username, password })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -46,7 +46,8 @@ export const getSelfData = async (token: string | undefined): Promise<User> => {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -54,55 +55,55 @@ export const getSongs = async (
   token: string | undefined
 ): Promise<Res<ManySongBodyRes>> => {
   const res: Res<ManySongBodyRes> = await api
-    .get("/premium/read", {
+    .get("/premium/song/read", {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
 export const createSong = async (
   judul: string,
-  audio: File | undefined,
-  duration: number,
+  audio: File,
   token: string | undefined
 ): Promise<Res<Song>> => {
   const formData = new FormData();
   formData.append("judul", judul);
-  if (audio) {
-    formData.append("audio", audio);
-    formData.append("duration", duration.toString());
-  }
+  formData.append("audio", audio);
+
   const res: Res<Song> = await api
-    .post("/premium/create", {
+    .post("/premium/song/create", formData, {
       headers: { Authorization: `Bearer ${token}` },
-      data: formData,
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
+};
+
+type UpdateSongDiff = {
+  judul?: string;
+  audio?: File;
 };
 
 export const updateSong = async (
   idSong: number,
-  judul: string | null,
-  audiopath: string | null,
-  duration: number | null,
+  diff: UpdateSongDiff,
   token: string | undefined
 ): Promise<Res<SingleSongBodyRes>> => {
   const formData = new FormData();
-  if (judul) {
-    formData.append("judul", judul);
+  if (diff.judul) {
+    formData.append("judul", diff.judul);
   }
-  if (audiopath && duration) {
-    formData.append("audiopath", audiopath);
-    formData.append("duration", duration.toString());
+  if (diff.audio) {
+    formData.append("audio", diff.audio);
   }
   const res: Res<SingleSongBodyRes> = await api
-    .patch(`/premium/update/${idSong}`, {
+    .patch(`/premium/song/update/${idSong}`, formData, {
       headers: { Authorization: `Bearer ${token}` },
-      data: { judul, audiopath },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -111,10 +112,11 @@ export const deleteSong = async (
   token: string | undefined
 ): Promise<Res<SingleSongBodyRes>> => {
   const res: Res<SingleSongBodyRes> = await api
-    .delete(`/premium/delete/${idSong}`, {
+    .delete(`/premium/song/delete/${idSong}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -122,12 +124,13 @@ export const getSubscriptions = async (
   token: string | undefined
 ): Promise<Res<ManySubscriptionBodyRes>> => {
   const res: Res<ManySubscriptionBodyRes> = await api
-    .get("/subscription", {
+    .get("/admin/subscription", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
 
@@ -137,11 +140,36 @@ export const acceptSubscription = async (
   token: string | undefined
 ): Promise<Res<SingleSubscriptionBodyRes>> => {
   const res: Res<SingleSubscriptionBodyRes> = await api
-    .patch(`/premium/${creator_id}/${subscriber_id}/accept`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response) => response.data);
+    .put(
+      `/admin/subscription/${creator_id}/${subscriber_id}/accept`,
+      undefined,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
+  return res;
+};
+
+export const rejectSubscription = async (
+  creator_id: number,
+  subscriber_id: number,
+  token: string | undefined
+): Promise<Res<SingleSubscriptionBodyRes>> => {
+  const res: Res<SingleSubscriptionBodyRes> = await api
+    .put(
+      `/admin/subscription/${creator_id}/${subscriber_id}/reject`,
+      undefined,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => response.data)
+    .catch((err) => err.response.data);
   return res;
 };
