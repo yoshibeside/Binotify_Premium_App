@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(undefined);
     setToken(undefined);
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
   };
 
   const loginHandler = async (
@@ -43,7 +42,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(user);
       setToken(token);
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
     } else {
       toast({
         id: "login-error",
@@ -58,11 +56,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
-      // if (!user) {
-      //   getSelfData(token).then((user) => {
-      //     setUser(user);
-      //   });
-      // }
     }
   }, [token]);
 
@@ -75,13 +68,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (!user) {
-      // getSelfData(token).then((user) => {
-      //   setUser(user);
-      // });
-      const newUser = localStorage.getItem("user");
-      if (newUser) {
-        setUser(JSON.parse(newUser));
-      }
+      getSelfData(token).then((res) => {
+        if (!res.isError && res.data) {
+          setUser(res.data);
+        } else {
+          localStorage.removeItem("token");
+          setToken(undefined);
+        }
+      });
     }
   }, []);
 

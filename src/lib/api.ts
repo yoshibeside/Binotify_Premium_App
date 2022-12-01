@@ -39,8 +39,10 @@ export const login = async (
   return res;
 };
 
-export const getSelfData = async (token: string | undefined): Promise<User> => {
-  const res: User = await api
+export const getSelfData = async (
+  token: string | undefined
+): Promise<Res<User>> => {
+  const res: Res<User> = await api
     .get("/self", {
       headers: {
         Authorization: `Bearer ${token}`,
