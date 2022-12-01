@@ -110,7 +110,7 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
           status: "error",
         });
       } else {
-        // window.location.reload();
+        window.location.reload();
       }
     });
   };
