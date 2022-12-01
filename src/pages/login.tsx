@@ -113,9 +113,9 @@ const Login = () => {
         Login
       </Button>
       <Text color="palette.lightPink">
-        Don't have an account?{" "}
+        Don't have an account?&nbsp;
         <Link
-          href="/login"
+          href="/register"
           color="palette.darkPink"
           _hover={{ textDecoration: "underline" }}
         >

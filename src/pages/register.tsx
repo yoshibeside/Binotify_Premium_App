@@ -7,8 +7,11 @@ import {
   Input,
   Button,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { register } from "../lib/api";
 
 const Register = () => {
   const pageTitle = document.getElementById("page-title");
@@ -19,6 +22,9 @@ const Register = () => {
   const [passwordTooShort, setPasswordTooShort] = useState(false);
   const [emailInvalid, setEmailInvalid] = useState(false);
   const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
+
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleNameChange = (e: any) => {
     if (e.target.value.length < 8) {
@@ -70,7 +76,8 @@ const Register = () => {
     }
   };
 
-  const handleInputChange = () => {
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
     const name = document.getElementById("name") as HTMLInputElement;
     const username = document.getElementById("username") as HTMLInputElement;
     const email = document.getElementById("email") as HTMLInputElement;
@@ -78,6 +85,34 @@ const Register = () => {
     const confirmPassword = document.getElementById(
       "confirm-password"
     ) as HTMLInputElement;
+
+    if (
+      name &&
+      username &&
+      email &&
+      password &&
+      confirmPassword &&
+      !nameTooShort &&
+      !usernameTooShort &&
+      !passwordTooShort &&
+      !emailInvalid &&
+      !passwordsDontMatch
+    ) {
+      register(username.value, name.value, email.value, password.value).then(
+        (res) => {
+          if (res.isError) {
+            toast({
+              id: "register-error",
+              title: "Register Error",
+              description: res.message,
+              status: "error",
+            });
+          } else {
+            navigate("/login");
+          }
+        }
+      );
+    }
   };
 
   return (
@@ -197,7 +232,12 @@ const Register = () => {
             <></>
           )}
         </FormControl>
-        <Button borderRadius="50px" padding="5px 25px 5px" alignSelf="flex-end">
+        <Button
+          onClick={handleSubmit}
+          borderRadius="50px"
+          padding="5px 25px 5px"
+          alignSelf="flex-end"
+        >
           Register
         </Button>
       </Flex>
