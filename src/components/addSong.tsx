@@ -92,7 +92,7 @@ const AddSong = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
                   id="audiofile"
                   placeholder="Judul"
                   type="file"
-                  accept="audio/mp3"
+                  accept="audio/*"
                   color="palette.sheerPink"
                   variant="unstyled"
                 ></Input>

@@ -107,7 +107,7 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
           status: "error",
         });
       } else {
-        window.location.reload();
+        // window.location.reload();
       }
     });
   };
@@ -190,9 +190,14 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
                 {song.isEditable ? (
                   <Input
                     type="file"
-                    accept="audio/mp3"
+                    accept="audio/*"
                     color="palette.sheerPink"
                     variant="unstyled"
+                    onChange={(e) => {
+                      const newSongsEntry = [...songsEntry];
+                      newSongsEntry[index].audio = e.target.files?.[0] || null;
+                      setSongsEntry(newSongsEntry);
+                    }}
                   />
                 ) : playingIndex === index &&
                   !!audioRef.current &&
