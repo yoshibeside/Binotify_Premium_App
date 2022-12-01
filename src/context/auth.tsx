@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getSelfData, login } from "../lib/api";
@@ -22,25 +23,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string>();
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const logoutHandler = async () => {
     setUser(undefined);
     setToken(undefined);
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
   const loginHandler = async (
     username: string,
     password: string
   ): Promise<void> => {
-    const { data } = await login(username, password);
-    if (data) {
+    const res = await login(username, password);
+    if (!res.isError && res.data) {
+      const { data } = res;
       const { token, user } = data;
-      console.log({ data });
       setUser(user);
       setToken(token);
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      toast({
+        id: "login-error",
+        title: "Login gagal",
+        description: res.message,
+        status: "error",
+      });
     }
   };
 
@@ -76,26 +86,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Session guard
-  // useEffect(() => {
-  //   if (user) {
-  //     if (user.isAdmin) {
-  //       if (location.pathname.startsWith("/user")) {
-  //         navigate("/admin");
-  //       }
-  //     } else {
-  //       if (location.pathname.startsWith("/admin")) {
-  //         navigate("/user");
-  //       }
-  //     }
-  //   } else {
-  //     if (
-  //       location.pathname.startsWith("/user") ||
-  //       location.pathname.startsWith("/admin")
-  //     ) {
-  //       navigate("/login");
-  //     }
-  //   }
-  // }, [location.pathname]);
+  useEffect(() => {
+    if (user) {
+      if (user.isAdmin) {
+        if (!location.pathname.startsWith("/admin")) {
+          navigate("/admin");
+        }
+      } else {
+        if (!location.pathname.startsWith("/user")) {
+          navigate("/user");
+        }
+      }
+    } else {
+      if (
+        location.pathname.startsWith("/user") ||
+        location.pathname.startsWith("/admin")
+      ) {
+        navigate("/login");
+      }
+    }
+  }, [location.pathname, user]);
 
   return (
     <Auth.Provider
