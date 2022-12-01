@@ -50,6 +50,9 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
         };
       })
     );
+    audioRef.current!.pause();
+    setPlayingIndex(-1);
+    setIsPlaying(false);
   }, [songs]);
 
   const handleEditable = (index: number) => {
@@ -130,6 +133,11 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
       setPlayingIndex(index);
       setIsPlaying(true);
     }
+
+    audio.onended = () => {
+      setPlayingIndex(-1);
+      setIsPlaying(false);
+    };
   };
 
   return (
