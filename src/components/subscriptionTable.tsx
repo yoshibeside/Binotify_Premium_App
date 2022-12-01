@@ -11,8 +11,11 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useAuth } from "../context/auth";
+import { acceptSubscription, rejectSubscription } from "../lib/api";
 
 import { Subscription } from "../types/models";
 
@@ -21,17 +24,45 @@ const SubscriptionEntry = ({
 }: {
   subscription: Subscription;
 }) => {
+  const { token } = useAuth();
+  const toast = useToast();
   function RenderButton() {
     const handleAccept = () => {
-      console.log("accept");
-
-      // belum diimplementasi
+      acceptSubscription(
+        subscription.creator_id,
+        subscription.subscriber_id,
+        token
+      ).then((res) => {
+        if (res.isError) {
+          toast({
+            id: "accept-subscription-error",
+            title: "Accept subscription failed",
+            description: res.message,
+            status: "error",
+          });
+        } else {
+          window.location.reload();
+        }
+      });
     };
 
     const handleReject = () => {
-      console.log("reject");
-
-      // belum diimplementasi
+      rejectSubscription(
+        subscription.creator_id,
+        subscription.subscriber_id,
+        token
+      ).then((res) => {
+        if (res.isError) {
+          toast({
+            id: "reject-subscription-error",
+            title: "Reject subscription failed",
+            description: res.message,
+            status: "error",
+          });
+        } else {
+          window.location.reload();
+        }
+      });
     };
 
     if (subscription.status == "PENDING") {
