@@ -1,5 +1,12 @@
 # Binotify
 
+## Related Projects
+
+- [Binotify Soap](https://gitlab.informatika.org/if3110-2022-k01-02-44/binotify-soap)
+- [Binotify Rest](https://gitlab.informatika.org/if3110-2022-k01-02-44/binotify-rest)
+- [Binotify Premium App](https://gitlab.informatika.org/if3110-2022-k01-02-44/binotify-premium-app)
+- [Binotify Config](https://gitlab.informatika.org/if3110-2022-k01-02-44/binotify-config)
+
 ## Deskripsi
 
 Binotify Premium merupakan aplikasi bagi penyanyi dan admin untuk mengelola lagu premium dan permintaan langgangan
