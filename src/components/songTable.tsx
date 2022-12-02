@@ -17,6 +17,7 @@ import {
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MdDelete, MdPause, MdPlayArrow } from "react-icons/md";
 import { Song } from "src/types/models";
@@ -28,7 +29,13 @@ type SongEntry = Song & {
   audio: File | null;
 };
 
-const SongTable = ({ songs }: { songs: Song[] }) => {
+const SongTable = ({
+  songs,
+  refresh,
+}: {
+  songs: Song[];
+  refresh: () => void;
+}) => {
   const [smallScreen] = useMediaQuery("(max-width: 800px)");
   const maxWidthTitle = smallScreen ? "200px" : "350px";
   const maxWidthPath = smallScreen ? "200px" : "350px";
@@ -84,7 +91,7 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
             status: "error",
           });
         } else {
-          window.location.reload();
+          refresh();
         }
       });
     }
@@ -110,7 +117,7 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
           status: "error",
         });
       } else {
-        window.location.reload();
+        refresh();
       }
     });
   };
@@ -143,7 +150,7 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
   return (
     <>
       <audio ref={audioRef} />
-      <Table textColor="#D9D9D9" maxWidth="1000px">
+      <Table textColor="#D9D9D9" maxWidth="1000px" overflow="hidden">
         <Thead>
           <Tr>
             <Th color="palette.lightPink" fontSize="1rem" width="1rem">
@@ -171,124 +178,148 @@ const SongTable = ({ songs }: { songs: Song[] }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {songsEntry.map((song, index) => (
-            <Tr key={index}>
-              <Td>{song.songId}</Td>
-              <Td>
-                <Editable
-                  onChange={(newJudul) => {
-                    const newSongsEntry = [...songsEntry];
-                    newSongsEntry[index].judul = newJudul;
-                    setSongsEntry(newSongsEntry);
-                  }}
-                  value={song.judul}
-                  isDisabled={!song.isEditable}
-                >
-                  <Text
-                    noOfLines={1}
-                    maxWidth={maxWidthTitle}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    as={EditablePreview}
-                  />
-                  <EditableInput />
-                </Editable>
-              </Td>
-              <Td>
-                {song.isEditable ? (
-                  <Input
-                    type="file"
-                    accept="audio/*"
-                    color="palette.sheerPink"
-                    variant="unstyled"
-                    onChange={(e) => {
+          <AnimatePresence mode="wait">
+            {songsEntry.map((song, index) => (
+              <Tr
+                as={motion.tr}
+                transition="0.3s"
+                initial={{ opacity: 0, transform: "translateX(100px)" }}
+                animate={{
+                  opacity: 1,
+                  transform: "translateX(0px)",
+                  transition: {
+                    delay: index * 0.15,
+                    easings: "easeInOut",
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  transform: "translateX(-100px)",
+                  transition: {
+                    delay: index * 0.15,
+                    easings: "easeInOut",
+                  },
+                }}
+                key={song.songId}
+              >
+                <Td>{song.songId}</Td>
+                <Td>
+                  <Editable
+                    onChange={(newJudul) => {
                       const newSongsEntry = [...songsEntry];
-                      newSongsEntry[index].audio = e.target.files?.[0] || null;
+                      newSongsEntry[index].judul = newJudul;
                       setSongsEntry(newSongsEntry);
                     }}
-                  />
-                ) : playingIndex === index &&
-                  !!audioRef.current &&
-                  isPlaying ? (
-                  <IconButton
-                    aria-label="pause"
-                    variant="unstyled"
-                    color="palette.lightPink"
-                    onClick={() => handlePlay(index)}
-                    icon={<Icon as={MdPause} fontSize="1.5rem" />}
-                  />
-                ) : (
-                  <IconButton
-                    aria-label="play"
-                    variant="unstyled"
-                    color="palette.lightPink"
-                    icon={<Icon as={MdPlayArrow} fontSize="1.5rem" />}
-                    onClick={() => handlePlay(index)}
-                  />
-                )}
-              </Td>
-              <Td>
-                <HStack py={2}>
+                    value={song.judul}
+                    isDisabled={!song.isEditable}
+                  >
+                    <Text
+                      noOfLines={1}
+                      maxWidth={maxWidthTitle}
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      as={EditablePreview}
+                    />
+                    <EditableInput />
+                  </Editable>
+                </Td>
+                <Td>
                   {song.isEditable ? (
-                    <>
-                      <IconButton
-                        colorScheme="transparent"
-                        variant="ghost"
-                        aria-label="submit"
-                        icon={
-                          <CheckIcon
-                            color="palette.lightPink"
-                            fontSize="1.2rem"
-                          />
-                        }
-                        onClick={() => handleUpdate(index)}
-                      />
-                      <IconButton
-                        colorScheme="transparent"
-                        variant="ghost"
-                        aria-label="cancel"
-                        icon={
-                          <CloseIcon
-                            color="palette.lightPink"
-                            fontSize="1.2rem"
-                          />
-                        }
-                        onClick={() => handleReset(index)}
-                      />
-                    </>
+                    <Input
+                      type="file"
+                      accept="audio/*"
+                      color="palette.sheerPink"
+                      variant="unstyled"
+                      onChange={(e) => {
+                        const newSongsEntry = [...songsEntry];
+                        newSongsEntry[index].audio =
+                          e.target.files?.[0] || null;
+                        setSongsEntry(newSongsEntry);
+                      }}
+                    />
+                  ) : playingIndex === index &&
+                    !!audioRef.current &&
+                    isPlaying ? (
+                    <IconButton
+                      aria-label="pause"
+                      variant="unstyled"
+                      color="palette.lightPink"
+                      onClick={() => handlePlay(index)}
+                      icon={<Icon as={MdPause} fontSize="1.5rem" />}
+                    />
                   ) : (
-                    <>
-                      <IconButton
-                        aria-label="edit"
-                        icon={
-                          <EditIcon
-                            color="palette.lightPink"
-                            fontSize="1.2rem"
-                          />
-                        }
-                        colorScheme="transparent"
-                        variant="ghost"
-                        onClick={() => handleEditable(index)}
-                      />
-                      <IconButton
-                        aria-label="delete"
-                        icon={
-                          <Icon
-                            as={MdDelete}
-                            color="palette.lightPink"
-                            fontSize="1.4rem"
-                          />
-                        }
-                        colorScheme="transparent"
-                        variant="ghost"
-                        onClick={() => handleDelete(song.songId)}
-                      />
-                    </>
+                    <IconButton
+                      aria-label="play"
+                      variant="unstyled"
+                      color="palette.lightPink"
+                      icon={<Icon as={MdPlayArrow} fontSize="1.5rem" />}
+                      onClick={() => handlePlay(index)}
+                    />
                   )}
-                </HStack>
-              </Td>
-            </Tr>
-          ))}
+                </Td>
+                <Td>
+                  <HStack py={2}>
+                    {song.isEditable ? (
+                      <>
+                        <IconButton
+                          colorScheme="transparent"
+                          variant="ghost"
+                          aria-label="submit"
+                          icon={
+                            <CheckIcon
+                              color="palette.lightPink"
+                              fontSize="1.2rem"
+                            />
+                          }
+                          onClick={() => handleUpdate(index)}
+                        />
+                        <IconButton
+                          colorScheme="transparent"
+                          variant="ghost"
+                          aria-label="cancel"
+                          icon={
+                            <CloseIcon
+                              color="palette.lightPink"
+                              fontSize="1.2rem"
+                            />
+                          }
+                          onClick={() => handleReset(index)}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <IconButton
+                          aria-label="edit"
+                          icon={
+                            <EditIcon
+                              color="palette.lightPink"
+                              fontSize="1.2rem"
+                            />
+                          }
+                          colorScheme="transparent"
+                          variant="ghost"
+                          onClick={() => handleEditable(index)}
+                        />
+                        <IconButton
+                          aria-label="delete"
+                          icon={
+                            <Icon
+                              as={MdDelete}
+                              color="palette.lightPink"
+                              fontSize="1.4rem"
+                            />
+                          }
+                          colorScheme="transparent"
+                          variant="ghost"
+                          onClick={() => handleDelete(song.songId)}
+                        />
+                      </>
+                    )}
+                  </HStack>
+                </Td>
+              </Tr>
+            ))}
+          </AnimatePresence>
         </Tbody>
       </Table>
     </>

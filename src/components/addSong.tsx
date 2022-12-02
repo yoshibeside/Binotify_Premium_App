@@ -40,7 +40,7 @@ const AddSong = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
             status: "error",
           });
         } else {
-          window.location.reload();
+          onClose();
         }
       });
     }

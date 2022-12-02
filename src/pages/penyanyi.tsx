@@ -51,7 +51,7 @@ const Penyanyi = () => {
   if (smallScreen) {
     offset = 4;
   } else {
-    offset = 6;
+    offset = 5;
   }
   const page = parseInt(searchParams.get("page") || "1");
   const filteredSongs = songs.filter((song) =>
@@ -73,7 +73,7 @@ const Penyanyi = () => {
     }
   };
 
-  useEffect(() => {
+  const refresh = () => {
     if (token) {
       getSongs(token).then((res) => {
         if (res.isError) {
@@ -88,11 +88,21 @@ const Penyanyi = () => {
         }
       });
     }
+  };
+
+  useEffect(() => {
+    refresh();
   }, [token]);
 
   return (
     <>
-      <VStack padding="20px 40px 20px" gap="20px" width="100%" h="100vh ">
+      <VStack
+        padding="20px 40px 20px"
+        gap="20px"
+        width="100%"
+        h="100vh"
+        overflow="hidden"
+      >
         <Flex direction="row" justify="space-between" width="100%">
           <Heading color="palette.lightPink" fontSize="3xl">
             Your Songs
@@ -135,7 +145,7 @@ const Penyanyi = () => {
           </Flex>
         </Flex>
         <Divider />
-        <SongTable songs={songsSubset} />
+        <SongTable songs={songsSubset} refresh={refresh} />
         <HStack
           position="absolute"
           bottom="40px"
@@ -161,7 +171,13 @@ const Penyanyi = () => {
             onClick={nextPage}
           />
         </HStack>
-        <AddSong isOpen={isOpen} onClose={onClose} />
+        <AddSong
+          isOpen={isOpen}
+          onClose={() => {
+            refresh();
+            onClose();
+          }}
+        />
       </VStack>
     </>
   );

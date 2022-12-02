@@ -1,6 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import FullPageLoading from "../components/fullPageLoading";
 import { getSelfData, login } from "../lib/api";
 import { User } from "../types/models";
 
@@ -21,6 +22,7 @@ export const Auth = createContext<AuthContext>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>();
   const [token, setToken] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -76,12 +78,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           localStorage.removeItem("token");
           setToken(undefined);
         }
+        setIsLoading(false);
       });
     }
   }, [token]);
 
   // Session guard
   useEffect(() => {
+    if (location.pathname.length <= 1) {
+      navigate("/login");
+    }
     if (user) {
       if (user.isAdmin) {
         if (!location.pathname.startsWith("/admin")) {
@@ -106,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <Auth.Provider
       value={{ user, token, logout: logoutHandler, login: loginHandler }}
     >
-      {children}
+      {!isLoading ? children : <FullPageLoading />}
     </Auth.Provider>
   );
 };

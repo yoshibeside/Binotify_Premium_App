@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useAuth } from "../context/auth";
 import { acceptSubscription, rejectSubscription } from "../lib/api";
@@ -21,8 +22,10 @@ import { Subscription } from "../types/models";
 
 const SubscriptionEntry = ({
   subscription,
+  index,
 }: {
   subscription: Subscription;
+  index: number;
 }) => {
   const { token } = useAuth();
   const toast = useToast();
@@ -93,7 +96,24 @@ const SubscriptionEntry = ({
   }
 
   return (
-    <Tr key={`${subscription.creator_id}-${subscription.subscriber_id}`}>
+    <Tr
+      as={motion.tr}
+      key={`${subscription.creator_id}-${subscription.subscriber_id}`}
+      transition="0.3s"
+      initial={{ opacity: 0, transform: "translateX(100px)" }}
+      animate={{
+        opacity: 1,
+        transform: "translateY(0px)",
+        transition: { delay: index * 0.1 },
+      }}
+      exit={{
+        opacity: 0,
+        transform: "translateX(-100px)",
+        transition: { delay: 0.1 * index },
+      }}
+      w="100%"
+      overflow="hidden"
+    >
       <Td padding="10px" height="60px">
         <Text
           fontSize="1rem"
@@ -142,7 +162,7 @@ export const SubscriptionTable = ({
 
   return (
     <TableContainer display="block" width={tableWidth}>
-      <Table textColor="#D9D9D9">
+      <Table textColor="#D9D9D9" overflow="hidden">
         <Thead>
           <Tr>
             <Th color="palette.lightPink" fontSize="1rem" padding="10px">
@@ -164,10 +184,16 @@ export const SubscriptionTable = ({
             </Th>
           </Tr>
         </Thead>
-        <Tbody>
-          {subscriptions.map((subscription) => (
-            <SubscriptionEntry subscription={subscription} />
-          ))}
+        <Tbody overflow="hidden">
+          <AnimatePresence mode="wait">
+            {subscriptions.map((subscription, index) => (
+              <SubscriptionEntry
+                key={index}
+                index={index}
+                subscription={subscription}
+              />
+            ))}
+          </AnimatePresence>
         </Tbody>
       </Table>
     </TableContainer>
