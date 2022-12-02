@@ -149,7 +149,7 @@ const Register = () => {
           />
           {nameTooShort ? (
             <FormErrorMessage marginTop="0">
-              Name must be at least 8 characters long
+              Name must be at least 4 characters long
             </FormErrorMessage>
           ) : (
             <></>
@@ -168,7 +168,7 @@ const Register = () => {
           />
           {usernameTooShort ? (
             <FormErrorMessage marginTop="0">
-              Userame must be at least 8 characters long
+              Username must be at least 5 characters long
             </FormErrorMessage>
           ) : (
             <></>
